@@ -1,39 +1,43 @@
+// HTML Elements
 const loanButton = document.getElementById("loanBtn");
 const currentBalance = document.getElementById("currentBalance");
-
 const loanDownPayment = document.getElementById("loanDownPay");
 const loanAmount = document.getElementById("loanAmount");
-
 const workAccountBalance = document.getElementById("workBalance");
 const workButton = document.getElementById("workBtn");
 const payButton = document.getElementById("payout");
 const downPaymentButton = document.getElementById("payBtn");
 const buyButton = document.getElementById("buyBtn");
 const askPriceText = document.getElementById("askPrice");
-
 const dropdownMenu = document.getElementById("change_chart");
 const productShort = document.getElementById("productShort");
-
 const productTitle = document.getElementById("productTitle");
 const productDescription = document.getElementById("productDesc");
 const productImage = document.getElementById("productImg");
 
-
+// Global Variables
+let products = [];
 const baseURL = "https://noroff-komputer-store-api.herokuapp.com/"
 
-let products = [];
 
 function getData() {
     try {
-        fetch("https://noroff-komputer-store-api.herokuapp.com/computers")
+        fetch(baseURL + "computers")
             .then(response => response.json())
             .then(data => products = data)
             .then(products => addProductsToMenu(products))
     } catch (error) {
-        
+        console.log("Error: " + error.message);
     }
 }
 
+function init() {
+    getData();
+}
+
+init();
+
+// Adding Products Into the Dropdown Menu
 const addProductsToMenu = (products) => {
     products.forEach(x => {
         addProductToMenu(x);
@@ -46,37 +50,30 @@ const addProductToMenu = (product) => {
     element.appendChild(document.createTextNode(product.title))
     dropdownMenu.appendChild(element);
     
-    if (products[0] == product) {
-        fillPage(product);
-    }
+    if (products[0] == product) { fillPage(product); }
 }
 
 const fillPage = (product) => {
+   
+    // To Remove Exsisting Text Before Adding New Once
     while (productShort.children.length > 3) {
         productShort.lastChild.remove();
     }
 
-
+    // Update Elements
     productTitle.innerText = product.title;
     productDescription.innerText = product.description;
     productImage.src = baseURL + product.image;
-    askPriceText.innerText = product.price
+    askPriceText.innerText = product.price;
 
-
+    // Create Elements
     product.specs.forEach(x => {
         const element = document.createElement("p");
         element.textContent = x + "\n";
         productShort.appendChild(element);
-    })
-    //productShort.appendChild();
+    });
 }
 
-
-function init() {
-    getData();
-}
-
-init();
 
 
 let hasActiveLoan = false;
@@ -86,7 +83,7 @@ const handleLoanEvent = e => {
         const amountUserWant = prompt("What is your name?");
         console.log(amountUserWant)
 
-        if (amountUserWant > currentBalance.innerText * 2) {
+        if (amountUserWant >= currentBalance.innerText * 2) {
             alert("Asked Amout Is More Than Current Balance Times 2")
         } else {
             loanAmount.innerText = amountUserWant;
@@ -119,7 +116,7 @@ const handlePayoutEvent = e => {
         currentBalance.innerText = Number(currentBalance.innerText) + (toTransfere - toDownPayment);
 
         // Some Logical Error Handling
-        if (Number(loanAmount.innerText) < 0) {
+        if (Number(loanAmount.innerText) <= 0) {
             currentBalance.innerText = Number(currentBalance.innerText) + (Number(loanAmount.innerText) * -1)
             loanAmount.innerText = 0;
             hasActiveLoan = false;
@@ -141,7 +138,7 @@ const handleDownpyamentEvent = e => {
         loanAmount.innerText = Number(loanAmount.innerText) - toTransfere;
         workAccountBalance.innerText = 0;
 
-        if (Number(loanAmount.innerText) < 0) {
+        if (Number(loanAmount.innerText) <= 0) {
             currentBalance.innerText = Number(currentBalance.innerText) + (Number(loanAmount.innerText) * -1);
             loanAmount.innerText = 0;
             hasActiveLoan = false;

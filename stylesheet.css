@@ -4,12 +4,11 @@
 
 .item {
     padding: min(3%, 30px);
-
-    
 }
 
 .titles {
     text-align: center; 
+    margin-top: min(5%, 50px);
 }
 
 .center-text {
@@ -18,4 +17,9 @@
 
 #loanDownPay, #payBtn {
     display: none;
+}
+
+.card {
+    padding: min(5%, 50px);
+    margin-bottom: min(5%, 50px);
 }

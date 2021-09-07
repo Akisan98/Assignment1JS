@@ -4,17 +4,18 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>The Komputer Store</title>
+    <title>Akisan - The Komputer Store</title>
+    <link rel="icon" href="https://www.akisan.ml/photos/_SHARED/auto_change.svg">
 
     <!-- Bootstrap CSS TAG --> 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-KyZXEAg3QhqLMpG8r+8fhAXLRk2vvoC2f3B09zVXn8CA5QIVfZOJ3BCsw2P0p/We" crossorigin="anonymous">
-
+    
+    <!-- Custom StyleSheet -->
     <link rel="stylesheet" href="/stylesheet.css">
 </head>
 <body>
     <!-- I Have Already Been Playing With HTML & CSS; SO I Will Use Bootstrap-->
 
-    <!-- As a link -->
     <nav class="navbar navbar-dark bg-dark">
         <div class="container-fluid">
             <a class="navbar-brand" href="#">The Komputer Store</a>
@@ -23,8 +24,7 @@
 
     <section class="options">
         <div class="row">
-            
-            <div class="col-lg">
+            <div class="col-lg card">
                 <h1 class="titles">Name of User</h1>
                 <div class="row col-lg-10 offset-lg-1">
                     <div class="col-sm center-text">
@@ -47,9 +47,9 @@
                 <div class="d-grid gap-2 col-6 mx-auto">
                     <button id="loanBtn" type="button" class="btn btn-success mx-auto">Get a Loan</button>
                 </div>
-            </div>
+            </div> <!-- END col-lg card -->
 
-            <div class="col-lg">
+            <div class="col-lg card">
                 <h1 class="titles">Work</h1>
                 <div class="row col-lg-10 offset-lg-1">
                     <div class="col-sm center-text">
@@ -66,28 +66,17 @@
                     <button class="btn btn-primary" type="button" id="workBtn">Work</button>
                     <button class="btn btn-success" type="button" id="payBtn">Repay</button>
                 </div>
-            </div>
+            </div> <!-- END col-lg card -->
             
-            <div class="col-lg" id="productShort">
+            <div class="col-lg card" id="productShort">
                 <h1 class="titles">Laptops</h1>
                 <div class="text-center">
                     <select id="change_chart">
-                        <!-- <option value="0" selected>livejournal</option>
-                        <option value="1">librarybooks</option>
-                        <option value="2">sunspots</option> -->
                     </select>
                 </div>
-
-                
-
-
                 <h5>Features:</h5>
-                <!-- <p>It has a Screen</p>
-                <p>There a Keyboard</p>
-                <p>(Some keys might be missing)</p> -->
-            </div>
-        
-        </div>
+            </div> <!-- END col-lg card -->
+        </div> <!-- END ROW -->
 
         <div class="row">
             <div class="col-lg-3">
@@ -103,31 +92,9 @@
             </div>
         </div>
     </section>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     
+    <!-- Custom JS -->
     <script src="./index.js"></script>
-
 
     <!-- Bootstrap JS TAG --> 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-U1DAWAznBHeqEIlVSCgzq+c9gqGAJn5c/t99JyeKa9xxaYpSvHU5awsuZVVFIhvj" crossorigin="anonymous"></script>
