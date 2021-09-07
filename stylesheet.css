@@ -1,0 +1,21 @@
+.options {
+    padding: min(5%, 50px);
+}
+
+.item {
+    padding: min(3%, 30px);
+
+    
+}
+
+.titles {
+    text-align: center; 
+}
+
+.center-text {
+    text-align: center; 
+}
+
+#loanDownPay, #payBtn {
+    display: none;
+}
