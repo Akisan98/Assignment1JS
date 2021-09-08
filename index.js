@@ -174,18 +174,26 @@ const handleBuyEvent = e => {
     const askPrice = Number(askPriceText.innerText);
     if (amount >= askPrice) {
         currentBalance.innerText = amount - askPrice;
-        alert("You Are now the new Owner!")
+        alert("You are now the proud owner of " + productTitle.innerText + "!")
     } else {
         alert("Not enough money")
     }
 }
-buyBtn.addEventListener("click", handleBuyEvent);
+
+// buyBtn.addEventListener("click", handleBuyEvent);
+
+buttonClick(buyButton, handleBuyEvent)
 
 function doDropdown() {
     fillPage(products[dropdownMenu.value - 1])
 }
 
 dropdownMenu.addEventListener("change", doDropdown)
+
+
+function buttonClick(button, method) {
+    button.addEventListener("click", method);
+}
 
 
 
