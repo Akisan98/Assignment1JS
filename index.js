@@ -14,6 +14,9 @@ const productShort = document.getElementById("productShort");
 const productTitle = document.getElementById("productTitle");
 const productDescription = document.getElementById("productDesc");
 const productImage = document.getElementById("productImg");
+const features = document.getElementById("featuresBox");
+
+
 
 // Global Variables
 let products = [];
@@ -23,26 +26,19 @@ const baseURL = "https://noroff-komputer-store-api.herokuapp.com/"
  * Fetches Data from The API and Generate Data which is used to populate the dropdown menu
  */
 function getData() {
-    try {
-        fetch(baseURL + "computers")
-            .then(response => response.json())
-            .then(data => products = data)
-            .then(products => addProductsToMenu(products))
-    } catch (error) {
-        console.log("Error: " + error.message);
-    }
+    return fetch(baseURL + "computers")
+        .then(function(response) {
+            if (!response.ok) {
+            throw new Error('Could not fetch the posts. 😭');
+            }
+            return response.json();
+        })
+        // .then(response => response.json())
+        // .then(data => products = data)
+        // .then(products => addProductsToMenu(products))
 }
 
-/**
- * INIT Function that runs at startup, since it does performe only one task here, it can be replaced
- * with a direct call on getData insstead.
- */
-function init() {
-    getData();
-}
 
-// Invokation of INIT
-init();
 
 // Adding Products Into the Dropdown Menu
 const addProductsToMenu = (products) => {
@@ -68,7 +64,8 @@ const addProductToMenu = (product) => {
 const fillPage = (product) => {
    
     // To Remove Exsisting Text Before Adding New Once 
-    resetPage();
+    //resetPage();
+    features.innerHTML = '';
 
     // Update Elements
     productTitle.innerText = product.title;
@@ -79,8 +76,8 @@ const fillPage = (product) => {
     // Create Elements
     product.specs.forEach(x => {
         const element = document.createElement("p");
-        element.textContent = x + "\n";
-        productShort.appendChild(element);
+        element.textContent = x;
+        features.appendChild(element);
     });
 }
 
@@ -189,4 +186,25 @@ function doDropdown() {
 }
 
 dropdownMenu.addEventListener("change", doDropdown)
+
+
+
+
+
+/**
+ * INIT Function that runs at startup, since it does performe only one task here, it can be replaced
+ * with a direct call on getData insstead.
+ */
+async function init() {
+    try {
+        products = await getData();
+        //displayProducts(products);
+        addProductsToMenu(products);
+    } catch (error) {
+        console.log("Error: " + error.message);
+    }
+}
+
+// Invokation of INIT
+init();
 
