@@ -16,11 +16,12 @@ const productDescription = document.getElementById("productDesc");
 const productImage = document.getElementById("productImg");
 const features = document.getElementById("featuresBox");
 
-
-
 // Global Variables
+let hasActiveLoan = false;
 let products = [];
 const baseURL = "https://noroff-komputer-store-api.herokuapp.com/"
+
+
 
 /**
  * Fetches Data from The API and Generate Data which is used to populate the dropdown menu
@@ -29,43 +30,44 @@ function getData() {
     return fetch(baseURL + "computers")
         .then(function(response) {
             if (!response.ok) {
-            throw new Error('Could not fetch the posts. 😭');
+                throw new Error('Could not fetch the posts. 😭');
             }
             return response.json();
         })
-        // .then(response => response.json())
-        // .then(data => products = data)
-        // .then(products => addProductsToMenu(products))
-}
-
-
-
-// Adding Products Into the Dropdown Menu
-const addProductsToMenu = (products) => {
-    products.forEach(x => {
-        addProductToMenu(x);
-    });
-}
-
-const addProductToMenu = (product) => {
-    const element = document.createElement("option");
-    element.value = product.id;
-    element.appendChild(document.createTextNode(product.title))
-    dropdownMenu.appendChild(element);
-    
-    if (products[0] == product) { fillPage(product); }
 }
 
 /**
- * Inserts Data Into Website like product information on the third card and 
+ * Method for Setting Up The Website With Information From API
+ * Both In The Dropdown Menu But Also The Card and Center View.
+ * @param {Array of Product} products 
+ * @param {HTMLElement} parentEl 
+ */
+function setupPage(products = [], parentEl, featureEl) {
+    // Fill Information in Center View
+    if (products.length > 0) {
+        fillPage(products[0], featureEl);
+    }
+
+    // Populate Dropdown Menu
+    for (const product of products) {
+        const element = document.createElement("option");
+        element.value = product.id;
+        element.appendChild(document.createTextNode(product.title))
+        parentEl.appendChild(element);
+    }
+}
+
+/**
+ * Inserts / Updates Data Into Website like product information on the third card and 
  * in the center view
  * @param {Any / Product} product 
  */
-const fillPage = (product) => {
+function fillPage(product, parentEl) {
    
-    // To Remove Exsisting Text Before Adding New Once 
-    //resetPage();
-    features.innerHTML = '';
+    // Removes HTML Elements from View / DOM
+    // when user chooses a new item from the dropdown,
+    // so both new and old elements don't appere together
+    parentEl.innerHTML = '';
 
     // Update Elements
     productTitle.innerText = product.title;
@@ -74,27 +76,14 @@ const fillPage = (product) => {
     askPriceText.innerText = product.price;
 
     // Create Elements
-    product.specs.forEach(x => {
+    for (const spec of product.specs) {
         const element = document.createElement("p");
-        element.textContent = x;
-        features.appendChild(element);
-    });
-}
-
-/**
- * Simple Function That Removes HTML Elements from View / DOM
- * when user chooses a new item from the dropdown,
- * so both new and old elements don't appere together
- */
-function resetPage() {
-    while (productShort.children.length > 3) {
-        productShort.lastChild.remove();
+        element.textContent = spec;
+        parentEl.appendChild(element);
     }
 }
 
 
-
-let hasActiveLoan = false;
 
 const handleLoanEvent = e => {
     if (hasActiveLoan === false) {
@@ -115,14 +104,12 @@ const handleLoanEvent = e => {
     }
 }
 
-loanButton.addEventListener("click", handleLoanEvent);
 
 
 const handleWorkEvent = e => {
     workAccountBalance.innerText =  Number(workAccountBalance.innerText) + 100;
 }
 
-workButton.addEventListener("click", handleWorkEvent);
 
 
 const handlePayoutEvent = e => {
@@ -147,7 +134,6 @@ const handlePayoutEvent = e => {
     }
 }
 
-payButton.addEventListener("click", handlePayoutEvent);
 
 
 const handleDownpyamentEvent = e => {
@@ -167,7 +153,6 @@ const handleDownpyamentEvent = e => {
         alert("No Active Loans Please use the Bank Button")
     }
 }
-downPaymentButton.addEventListener("click", handleDownpyamentEvent);
 
 const handleBuyEvent = e => {
     const amount = Number(currentBalance.innerText);
@@ -180,24 +165,22 @@ const handleBuyEvent = e => {
     }
 }
 
-// buyBtn.addEventListener("click", handleBuyEvent);
 
-buttonClick(buyButton, handleBuyEvent)
 
 function doDropdown() {
-    fillPage(products[dropdownMenu.value - 1])
+    fillPage(products[dropdownMenu.value - 1], features)
 }
 
+
+
+
+// EventListeners
+loanButton.addEventListener("click", handleLoanEvent);
+workButton.addEventListener("click", handleWorkEvent);
+payButton.addEventListener("click", handlePayoutEvent);
+downPaymentButton.addEventListener("click", handleDownpyamentEvent);
+buyButton.addEventListener("click", handleBuyEvent);
 dropdownMenu.addEventListener("change", doDropdown)
-
-
-function buttonClick(button, method) {
-    button.addEventListener("click", method);
-}
-
-
-
-
 
 /**
  * INIT Function that runs at startup, since it does performe only one task here, it can be replaced
@@ -206,8 +189,7 @@ function buttonClick(button, method) {
 async function init() {
     try {
         products = await getData();
-        //displayProducts(products);
-        addProductsToMenu(products);
+        setupPage(products, dropdownMenu, features);
     } catch (error) {
         console.log("Error: " + error.message);
     }
