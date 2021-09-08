@@ -21,8 +21,6 @@ let hasActiveLoan = false;
 let products = [];
 const baseURL = "https://noroff-komputer-store-api.herokuapp.com/"
 
-
-
 /**
  * Fetches Data from The API and Generate Data which is used to populate the dropdown menu
  */
@@ -45,7 +43,7 @@ function getData() {
 function setupPage(products = [], parentEl, featureEl) {
     // Fill Information in Center View
     if (products.length > 0) {
-        fillPage(products[0], featureEl);
+        updatePage(products[0], featureEl);
     }
 
     // Populate Dropdown Menu
@@ -62,8 +60,8 @@ function setupPage(products = [], parentEl, featureEl) {
  * in the center view
  * @param {Any / Product} product 
  */
-function fillPage(product, parentEl) {
-   
+function updatePage(product, parentEl) {
+    
     // Removes HTML Elements from View / DOM
     // when user chooses a new item from the dropdown,
     // so both new and old elements don't appere together
@@ -82,8 +80,6 @@ function fillPage(product, parentEl) {
         parentEl.appendChild(element);
     }
 }
-
-
 
 const handleLoanEvent = e => {
     if (hasActiveLoan === false) {
@@ -104,13 +100,9 @@ const handleLoanEvent = e => {
     }
 }
 
-
-
 const handleWorkEvent = e => {
     workAccountBalance.innerText =  Number(workAccountBalance.innerText) + 100;
 }
-
-
 
 const handlePayoutEvent = e => {
     if (hasActiveLoan) {
@@ -134,8 +126,6 @@ const handlePayoutEvent = e => {
     }
 }
 
-
-
 const handleDownpyamentEvent = e => {
     if (hasActiveLoan) {
         let toTransfere = Number(workAccountBalance.innerText);
@@ -154,9 +144,14 @@ const handleDownpyamentEvent = e => {
     }
 }
 
-const handleBuyEvent = e => {
+/**
+ * Method to Facilitate the Process of Buying the Product
+ * Reduces Bank Account With Price
+ */
+function buyProduct() {
     const amount = Number(currentBalance.innerText);
     const askPrice = Number(askPriceText.innerText);
+
     if (amount >= askPrice) {
         currentBalance.innerText = amount - askPrice;
         alert("You are now the proud owner of " + productTitle.innerText + "!")
@@ -165,22 +160,16 @@ const handleBuyEvent = e => {
     }
 }
 
-
-
-function doDropdown() {
-    fillPage(products[dropdownMenu.value - 1], features)
-}
-
-
-
-
 // EventListeners
 loanButton.addEventListener("click", handleLoanEvent);
 workButton.addEventListener("click", handleWorkEvent);
 payButton.addEventListener("click", handlePayoutEvent);
 downPaymentButton.addEventListener("click", handleDownpyamentEvent);
-buyButton.addEventListener("click", handleBuyEvent);
-dropdownMenu.addEventListener("change", doDropdown)
+buyButton.addEventListener("click", buyProduct);
+dropdownMenu.addEventListener("change", function () {
+    updatePage(products[dropdownMenu.value - 1], features)
+});
+
 
 /**
  * INIT Function that runs at startup, since it does performe only one task here, it can be replaced
