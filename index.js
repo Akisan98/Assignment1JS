@@ -19,7 +19,9 @@ const productImage = document.getElementById("productImg");
 let products = [];
 const baseURL = "https://noroff-komputer-store-api.herokuapp.com/"
 
-
+/**
+ * Fetches Data from The API and Generate Data which is used to populate the dropdown menu
+ */
 function getData() {
     try {
         fetch(baseURL + "computers")
@@ -31,10 +33,15 @@ function getData() {
     }
 }
 
+/**
+ * INIT Function that runs at startup, since it does performe only one task here, it can be replaced
+ * with a direct call on getData insstead.
+ */
 function init() {
     getData();
 }
 
+// Invokation of INIT
 init();
 
 // Adding Products Into the Dropdown Menu
@@ -53,12 +60,15 @@ const addProductToMenu = (product) => {
     if (products[0] == product) { fillPage(product); }
 }
 
+/**
+ * Inserts Data Into Website like product information on the third card and 
+ * in the center view
+ * @param {Any / Product} product 
+ */
 const fillPage = (product) => {
    
-    // To Remove Exsisting Text Before Adding New Once
-    while (productShort.children.length > 3) {
-        productShort.lastChild.remove();
-    }
+    // To Remove Exsisting Text Before Adding New Once 
+    resetPage();
 
     // Update Elements
     productTitle.innerText = product.title;
@@ -74,6 +84,17 @@ const fillPage = (product) => {
     });
 }
 
+/**
+ * Simple Function That Removes HTML Elements from View / DOM
+ * when user chooses a new item from the dropdown,
+ * so both new and old elements don't appere together
+ */
+function resetPage() {
+    while (productShort.children.length > 3) {
+        productShort.lastChild.remove();
+    }
+}
+
 
 
 let hasActiveLoan = false;
@@ -83,7 +104,7 @@ const handleLoanEvent = e => {
         const amountUserWant = prompt("What is your name?");
         console.log(amountUserWant)
 
-        if (amountUserWant >= currentBalance.innerText * 2) {
+        if (amountUserWant > currentBalance.innerText * 2) {
             alert("Asked Amout Is More Than Current Balance Times 2")
         } else {
             loanAmount.innerText = amountUserWant;
