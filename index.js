@@ -48,9 +48,13 @@ function setupPage(products = [], parentEl, featureEl) {
 
     // Populate Dropdown Menu
     for (const product of products) {
+
+        // Create Option Element, Attatch ID, Give it a Title
         const element = document.createElement("option");
         element.value = product.id;
         element.appendChild(document.createTextNode(product.title))
+
+        // Add Option Element to HTML
         parentEl.appendChild(element);
     }
 }
@@ -81,14 +85,30 @@ function updatePage(product, parentEl) {
     }
 }
 
-const handleLoanEvent = e => {
+// OnClickEventHandlers
+
+/**
+ * Method for Handling The Loan Application by User, 
+ * If they don't have exsisting loan then they can get a 
+ * loan up too double of current bank account balance. 
+ * If they have a loan then it will reject by displaying a 
+ * prompt saying that you can't have more then one loan.
+ */
+function applyLoan() {
+
+    // Check Whether User Has Loan
     if (hasActiveLoan === false) {
+
+        // How Much Loan Do User Want
         const amountUserWant = prompt("What is your name?");
         console.log(amountUserWant)
 
+        // Reject if Asked Amount is more then Double Current Bank Account Balance with Prompt
         if (amountUserWant > currentBalance.innerText * 2) {
             alert("Asked Amout Is More Than Current Balance Times 2")
-        } else {
+        } else { 
+            
+            // Grant Loan and Make Owned Amount and RePay button Visable to User
             loanAmount.innerText = amountUserWant;
             loanDownPayment.style.display = 'flex';
             downPaymentButton.style.display = 'unset';
@@ -100,45 +120,48 @@ const handleLoanEvent = e => {
     }
 }
 
-const handleWorkEvent = e => {
-    workAccountBalance.innerText =  Number(workAccountBalance.innerText) + 100;
-}
-
-const handlePayoutEvent = e => {
-    if (hasActiveLoan) {
+/**
+ * Method for Handling The Payout of Employee's Salary to Their Bank Account.
+ * If they have a loan 10% of their pay will be diverted towards down-payment, 
+ * while rest is deposited into their bank account.
+ */
+ function salaryPayout() {
+    
+    // Check Whether User Has Loan
+    if (hasActiveLoan) { 
         let toTransfere = Number(workAccountBalance.innerText);
         const toDownPayment = toTransfere * 0.1;
+
+        // Transfere to Fund to Bank Account With 10% Towards the Loan
         loanAmount.innerText = Number(loanAmount.innerText) - toDownPayment;
         workAccountBalance.innerText = 0;
         currentBalance.innerText = Number(currentBalance.innerText) + (toTransfere - toDownPayment);
 
-        // Some Logical Error Handling
-        if (Number(loanAmount.innerText) <= 0) {
-            currentBalance.innerText = Number(currentBalance.innerText) + (Number(loanAmount.innerText) * -1)
-            loanAmount.innerText = 0;
-            hasActiveLoan = false;
-            loanDownPayment.style.display = 'none';
-            downPaymentButton.style.display = 'none';
-        }
+        // Make Sure We Don't Pay Too Much on the Loan
+        paidToMuch(currentBalance);
     } else {
+
+        // If Employee is Debt Free then Transfere the Funds and Reset the Work Account to 0.
         currentBalance.innerText =  Number(currentBalance.innerText) + Number(workAccountBalance.innerText);
         workAccountBalance.innerText = 0;
     }
 }
 
-const handleDownpyamentEvent = e => {
+/**
+ * Method for Making Down Payment on Loan by Diverting 100% of the Salary Towards the Loan
+ */
+function makeDownPayment() {
+    
+    // Check Whether User Has Loan
     if (hasActiveLoan) {
         let toTransfere = Number(workAccountBalance.innerText);
+
+        // Transfere the Fund Towards the Down-payment of Loan and reset Work Account 
         loanAmount.innerText = Number(loanAmount.innerText) - toTransfere;
         workAccountBalance.innerText = 0;
 
-        if (Number(loanAmount.innerText) <= 0) {
-            currentBalance.innerText = Number(currentBalance.innerText) + (Number(loanAmount.innerText) * -1);
-            loanAmount.innerText = 0;
-            hasActiveLoan = false;
-            loanDownPayment.style.display = 'none';
-            downPaymentButton.style.display = 'none';
-        }
+        // Make Sure We Don't Pay Too Much on the Loan
+        paidToMuch(currentBalance);
     } else {
         alert("No Active Loans Please use the Bank Button")
     }
@@ -152,6 +175,7 @@ function buyProduct() {
     const amount = Number(currentBalance.innerText);
     const askPrice = Number(askPriceText.innerText);
 
+    // Check If User can Afford
     if (amount >= askPrice) {
         currentBalance.innerText = amount - askPrice;
         alert("You are now the proud owner of " + productTitle.innerText + "!")
@@ -160,16 +184,39 @@ function buyProduct() {
     }
 }
 
-// EventListeners
-loanButton.addEventListener("click", handleLoanEvent);
-workButton.addEventListener("click", handleWorkEvent);
-payButton.addEventListener("click", handlePayoutEvent);
-downPaymentButton.addEventListener("click", handleDownpyamentEvent);
+// EventListeners - Trigger, Function They Call
+loanButton.addEventListener("click", applyLoan);
+payButton.addEventListener("click", salaryPayout);
+downPaymentButton.addEventListener("click", makeDownPayment);
 buyButton.addEventListener("click", buyProduct);
-dropdownMenu.addEventListener("change", function () {
-    updatePage(products[dropdownMenu.value - 1], features)
+
+/**
+ * Pressing The Work Button Will Increase the Counter / Work Account Balance by 100
+ */
+workButton.addEventListener("click", function () {
+    workAccountBalance.innerText =  Number(workAccountBalance.innerText) + 100;
 });
 
+/**
+ * Changing / Selecting Item in the Dropdown Menu Will Cause Website to Update with Corresponding Information
+ */
+dropdownMenu.addEventListener("change", function () {
+    updatePage(products[dropdownMenu.value - 1], features) // Dropdown Value Start at 1
+});
+
+// Helper Function - DRY
+/**
+ * Checks Whether We Have Paid Too Much on The Loan and Bounces the excess money into the users bank account
+ */
+ function paidToMuch(bounceBackAccount) {
+    if (Number(loanAmount.innerText) <= 0) {
+        bounceBackAccount.innerText = Number(bounceBackAccount.innerText) + (Number(loanAmount.innerText) * -1);
+        loanAmount.innerText = 0;
+        hasActiveLoan = false;
+        loanDownPayment.style.display = 'none';
+        downPaymentButton.style.display = 'none';
+    }
+}
 
 /**
  * INIT Function that runs at startup, since it does performe only one task here, it can be replaced
@@ -177,7 +224,7 @@ dropdownMenu.addEventListener("change", function () {
  */
 async function init() {
     try {
-        products = await getData();
+        products = await getData(); // API
         setupPage(products, dropdownMenu, features);
     } catch (error) {
         console.log("Error: " + error.message);
